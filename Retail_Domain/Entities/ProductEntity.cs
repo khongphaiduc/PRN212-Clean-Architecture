@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Retail_Domain.Entities
 {
+    // Domain Entity không nên chứa navigation của EF.
     public class ProductEntity
     {
         public int Id { get; private set; }
@@ -14,13 +15,18 @@ namespace Retail_Domain.Entities
         public int Quantity { get; private set; } // Số lượng tồn kho hiện tại
         public int CategoryId { get; private set; }
 
-        // Navigation properties
-        public virtual CategoryEntity CategoryEntity { get; private set; } = null!;
-
-        public readonly List<StockTransactionEntity> _stockTransactions = new();
-        public virtual IReadOnlyCollection<StockTransactionEntity> StockTransactions => _stockTransactions.AsReadOnly();
 
         private ProductEntity() { }
+
+        public ProductEntity(int id, string name, decimal price, int quantity, int categoryId)
+        {
+            Id = id;
+            Name = name;
+            Price = price;
+            Quantity = quantity;
+            CategoryId = categoryId;
+          
+        }
 
         public ProductEntity(string name, decimal price, int categoryId, int initialQuantity = 0)
         {
@@ -57,7 +63,7 @@ namespace Retail_Domain.Entities
                 throw new ArgumentException("Số lượng nhập phải lớn hơn 0.", nameof(quantity));
 
             Quantity += quantity;
-            _stockTransactions.Add(new StockTransactionEntity(Id, quantity, "Inbound", note));
+           
         }
 
         // Nghiệp vụ XUẤT KHO (Giảm số lượng và tự tạo Transaction)
@@ -70,7 +76,7 @@ namespace Retail_Domain.Entities
                 throw new InvalidOperationException("Số lượng hàng trong kho không đủ để xuất.");
 
             Quantity -= quantity;
-            _stockTransactions.Add(new StockTransactionEntity(Id, quantity, "Outbound", note));
+           
         }
     }
 }

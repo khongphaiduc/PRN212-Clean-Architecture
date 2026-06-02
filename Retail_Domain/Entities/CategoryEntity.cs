@@ -6,26 +6,21 @@ using System.Threading.Tasks;
 
 namespace Retail_Domain.Entities
 {
+    // Domain Entity không nên chứa navigation của EF.
     public class CategoryEntity
     {
         public int Id { get; private set; }
         public string Name { get; private set; }
         public string? Description { get; private set; }
 
+        public CategoryEntity() { }
 
-        private readonly List<ProductEntity> _products = new();
-        public virtual IReadOnlyCollection<ProductEntity> Products => _products.AsReadOnly();
-
-
-        private CategoryEntity() { }
-
-
-        public CategoryEntity(string name, string? description)
+        public CategoryEntity(int id, string name, string? description)
         {
-            UpdateName(name);
+            Id = id;
+            Name = name;
             Description = description;
         }
-
 
         public void UpdateName(string newName)
         {

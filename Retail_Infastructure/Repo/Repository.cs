@@ -5,7 +5,7 @@ using Retail_Infastructure.Context;
 namespace Retail_Infastructure.Repo
 {
     // vì IRepo này nó quản lý các model của database ,  nhưng các class con của nó sử dụng Entity (Domain) thế nên ta cần map từ Entity sang Model
-    public class Repository<T> : IRepository<T> where T : class
+    public class Repository<TEntity, TModel> : IRepository<TEntity> where TEntity : class where TModel : class
     {
         private readonly ManagementRetailContext _dbContext;    // database 
 
@@ -14,24 +14,24 @@ namespace Retail_Infastructure.Repo
             _dbContext = dbContext;
         }
 
-        public async Task<IEnumerable<T>> GetAllAsync()
+        public async Task<IEnumerable<TEntity>> GetAllAsync()
         {
-            return await _dbContext.Set<T>().ToListAsync();
+            return await _dbContext.Set<TEntity>().ToListAsync();
         }
 
-        public async Task<T?> GetByIdAsync(int id)
+        public async Task<TEntity?> GetByIdAsync(int id)
         {
-            return await _dbContext.Set<T>().FindAsync(id);
+            return await _dbContext.Set<TEntity>().FindAsync(id);
         }
 
-        public async Task AddAsync(T entity)
+        public async Task AddAsync(TEntity entity)
         {
-            await _dbContext.Set<T>().AddAsync(entity);
+            await _dbContext.Set<TEntity>().AddAsync(entity);
         }
 
-        public Task UpdateAsync(T entity)
+        public Task UpdateAsync(TEntity entity)
         {
-            _dbContext.Set<T>().Update(entity);
+            _dbContext.Set<TEntity>().Update(entity);
             return Task.CompletedTask;
         }
 
@@ -43,7 +43,7 @@ namespace Retail_Infastructure.Repo
             {
                 throw new Exception($"Entity with id {id} not found.");
             }
-            _dbContext.Set<T>().Remove(entity);
+            _dbContext.Set<TEntity>().Remove(entity);
         }
     }
 }

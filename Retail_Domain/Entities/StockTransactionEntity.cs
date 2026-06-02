@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Retail_Domain.Entities
 {
+    // Domain Entity không nên chứa navigation của EF.
     public class StockTransactionEntity
     {
         public int Id { get; private set; }
@@ -14,19 +15,18 @@ namespace Retail_Domain.Entities
         public DateTime TransactionDate { get; private set; }
         public string? Note { get; private set; }
         public string TransactionType { get; private set; } = null!; // "Inbound" hoặc "Outbound"
-
-        public virtual ProductEntity Product { get; private set; } = null!;
-
         private StockTransactionEntity() { }
 
-        // Constructor internal để đảm bảo chỉ có Product Entity (Aggregate Root) mới được tạo Transaction này
-        internal StockTransactionEntity(int productId, int quantity, string transactionType, string? note)
+        public StockTransactionEntity(int id, int productId, int quantity, DateTime transactionDate, string? note, string transactionType)
         {
+            Id = id;
             ProductId = productId;
             Quantity = quantity;
-            TransactionType = transactionType;
+            TransactionDate = transactionDate;
             Note = note;
-            TransactionDate = DateTime.UtcNow; // Luôn lấy giờ chuẩn UTC ở tầng Domain
+            TransactionType = transactionType;
+
         }
+
     }
 }
