@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Retail_Application.Interfaces;
 using Retail_Infastructure.Context;
 
@@ -7,31 +8,37 @@ namespace Retail_Infastructure.Repo
     // vì IRepo này nó quản lý các model của database ,  nhưng các class con của nó sử dụng Entity (Domain) thế nên ta cần map từ Entity sang Model
     public class Repository<TEntity, TModel> : IRepository<TEntity> where TEntity : class where TModel : class
     {
-        private readonly ManagementRetailContext _dbContext;    // database 
+        protected ManagementRetailContext _dbContext;    // database 
+        protected readonly IMapper _mapper;
 
-        public Repository(ManagementRetailContext dbContext)
+        public Repository(ManagementRetailContext dbContext, IMapper mapper)
         {
             _dbContext = dbContext;
+            _mapper = mapper;
         }
 
         public async Task<IEnumerable<TEntity>> GetAllAsync()
         {
-            return await _dbContext.Set<TEntity>().ToListAsync();
+            var models = await _dbContext.Set<TModel>().ToListAsync();
+            return _mapper.Map<IEnumerable<TEntity>>(models);
         }
 
         public async Task<TEntity?> GetByIdAsync(int id)
         {
-            return await _dbContext.Set<TEntity>().FindAsync(id);
+            var model = await _dbContext.Set<TModel>().FindAsync(id);
+            return _mapper.Map<TEntity?>(model);
         }
 
         public async Task AddAsync(TEntity entity)
         {
-            await _dbContext.Set<TEntity>().AddAsync(entity);
+            var model = _mapper.Map<TModel>(entity);
+            await _dbContext.Set<TModel>().AddAsync(model);
         }
 
         public Task UpdateAsync(TEntity entity)
         {
-            _dbContext.Set<TEntity>().Update(entity);
+            var model = _mapper.Map<TModel>(entity);
+            _dbContext.Set<TModel>().Update(model);
             return Task.CompletedTask;
         }
 
@@ -43,7 +50,9 @@ namespace Retail_Infastructure.Repo
             {
                 throw new Exception($"Entity with id {id} not found.");
             }
-            _dbContext.Set<TEntity>().Remove(entity);
+
+            var model = _mapper.Map<TModel>(entity);
+            _dbContext.Set<TModel>().Remove(model);
         }
     }
 }

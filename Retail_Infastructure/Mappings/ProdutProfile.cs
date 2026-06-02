@@ -17,7 +17,6 @@ namespace Retail.Infastructure.Mappings
 
                 s.Id, s.Name, s.Price, s.Quantity, s.CategoryId));
 
-
             CreateMap<ProductEntity, Product>();
         }
     }

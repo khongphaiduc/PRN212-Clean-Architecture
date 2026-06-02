@@ -1,6 +1,8 @@
-﻿using Retail_Application.Interfaces;
+﻿using AutoMapper;
+using Retail_Application.Interfaces;
 using Retail_Domain.Entities;
 using Retail_Infastructure.Context;
+using Retail_Infastructure.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,10 +11,11 @@ using System.Threading.Tasks;
 
 namespace Retail_Infastructure.Repo
 {
-    public class CategoryRepository : Repository<CategoryEntity>, ICategoryRepository
+    public class CategoryRepository : Repository<CategoryEntity, Category>, ICategoryRepository
     {
-        public CategoryRepository(ManagementRetailContext dbContext) : base(dbContext)
+        public CategoryRepository(ManagementRetailContext dbContext, IMapper mapper) : base(dbContext, mapper)
         {
+
         }
     }
 }

@@ -9,6 +9,6 @@ namespace Retail_Application.Interfaces
 {
     public interface IProductRepository : IRepository<ProductEntity>
     {
-
+        Task<IEnumerable<ProductEntity>> GetProductsByCategoryId(int id);
     }
 }
