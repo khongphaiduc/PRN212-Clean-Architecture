@@ -19,7 +19,7 @@ namespace Retail_Infastructure.Repo
 
         public async Task<IEnumerable<TEntity>> GetAllAsync()
         {
-            var models = await _dbContext.Set<TModel>().ToListAsync();
+            var models = await _dbContext.Set<TModel>().AsNoTracking().ToListAsync();
             return _mapper.Map<IEnumerable<TEntity>>(models);
         }
 
@@ -38,6 +38,7 @@ namespace Retail_Infastructure.Repo
         public Task UpdateAsync(TEntity entity)
         {
             var model = _mapper.Map<TModel>(entity);
+            _dbContext.ChangeTracker.Clear();                  // vì EF đang track model nhưng mà chuyền vào lại là Entity , sau đó lại map từ Entity sang Model  , nên nó sẽ bị lỗi vì nó đang track model cũ , nên ta phải clear nó đi để nó không còn track nữa , sau đó mới update model mới vào
             _dbContext.Set<TModel>().Update(model);
             return Task.CompletedTask;
         }
@@ -52,7 +53,8 @@ namespace Retail_Infastructure.Repo
             }
 
             var model = _mapper.Map<TModel>(entity);
+            _dbContext.ChangeTracker.Clear();
             _dbContext.Set<TModel>().Remove(model);
-        }
+        } 
     }
 }

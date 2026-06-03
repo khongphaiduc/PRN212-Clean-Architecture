@@ -9,13 +9,13 @@ namespace Retail_Domain.Entities
     // Domain Entity không nên chứa navigation của EF.
     public class StockTransactionEntity
     {
-        public int Id { get; private set; }
-        public int ProductId { get; private set; }
-        public int Quantity { get; private set; }
-        public DateTime TransactionDate { get; private set; }
-        public string? Note { get; private set; }
-        public string TransactionType { get; private set; } = null!; // "Inbound" hoặc "Outbound"
-        private StockTransactionEntity() { }
+        public int Id { get;  set; }
+        public int ProductId { get;  set; }
+        public int Quantity { get;  set; }
+        public DateTime TransactionDate { get; set; }
+        public string? Note { get; set; }
+        public string TransactionType { get; set; } = null!; // "Inbound" hoặc "Outbound"
+        public StockTransactionEntity() { }
 
         public StockTransactionEntity(int id, int productId, int quantity, DateTime transactionDate, string? note, string transactionType)
         {

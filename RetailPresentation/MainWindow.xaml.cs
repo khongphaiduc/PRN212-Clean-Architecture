@@ -4,76 +4,96 @@ using System;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-// XÓA: using Retail_Application.Interfaces; (UI không được phép biết đến Repository)
 
 namespace RetailPresentation
 {
     public partial class MainWindow : Window
     {
         private readonly ICategoryService _categoryService;
+        private readonly IProductService _productService;
+        private readonly IStockService _stockService;
 
-        // SỬA: Chỉ tiêm Service vào UI, xóa bỏ hoàn toàn ICategoryRepository
-        public MainWindow(ICategoryService categoryService)
+        // Tiêm cả 3 service thông qua DI
+        public MainWindow(ICategoryService categoryService, IProductService productService, IStockService stockService)
         {
             InitializeComponent();
             _categoryService = categoryService;
-
-            // Đăng ký sự kiện khi Window vừa load xong
+            _productService = productService;
+            _stockService = stockService;
             this.Loaded += MainWindow_Loaded;
         }
 
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            await LoadCategoriesAsync();
+            await LoadDataAsync();
         }
 
-        private async Task LoadCategoriesAsync()
+        private async Task LoadDataAsync()
         {
             try
             {
-                // SỬA LỚN NHẤT: Gọi hàm GetAllCategory() từ Service
-                // Kết quả trả về lúc này là danh sách CategoryDTO sạch sẽ, an toàn
+                // Tải danh sách Categories vào ComboBox
                 var categories = await _categoryService.GetAllCategory();
+                cboCategories.ItemsSource = categories;
 
-                // Đổ dữ liệu vào ListBox
-                lstCategories.ItemsSource = categories;
+                // Tải toàn bộ Products vào DataGrid (mặc định)
+                var products = await _productService.GetAllProductsAsync();
+                dgProducts.ItemsSource = products;
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi khi tải danh sách danh mục: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Lỗi tải dữ liệu: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
-        private async void lstCategories_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private async void cboCategories_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (lstCategories.SelectedItem == null) return;
-
-            // Item được chọn lúc này chắc chắn là một CategoryDTO
-            var selectedCategory = lstCategories.SelectedItem as CategoryDTO;
-
-            if (selectedCategory != null)
+            if (cboCategories.SelectedItem is CategoryDTO selectedCategory)
             {
                 try
                 {
-                    int categoryId = selectedCategory.Id;
-
-                    // Lấy chi tiết category cùng danh sách product
-                    var categoryWithProducts = await _categoryService.GetCategoryWithProductsAsync(categoryId);
-
-                    if (categoryWithProducts != null && categoryWithProducts.Products != null)
-                    {
-                        // Đổ danh sách sản phẩm vào DataGrid bên phải
-                        dgProducts.ItemsSource = categoryWithProducts.Products;
-                    }
-                    else
-                    {
-                        dgProducts.ItemsSource = null;
-                    }
+                    // Lọc sản phẩm theo Category
+                    var categoryWithProducts = await _categoryService.GetCategoryWithProductsAsync(selectedCategory.Id);
+                    dgProducts.ItemsSource = categoryWithProducts?.Products;
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Lỗi khi tải danh sách sản phẩm: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show($"Lỗi lọc sản phẩm: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
+            }
+        }
+
+        private async void btnRefresh_Click(object sender, RoutedEventArgs e)
+        {
+            cboCategories.SelectedItem = null;
+            await LoadDataAsync();
+        }
+
+        private void btnAddProduct_Click(object sender, RoutedEventArgs e)
+        {
+            // Truyền các Service cần thiết sang màn hình Add
+            var addWindow = new AddProductWindow(_categoryService, _productService);
+            if (addWindow.ShowDialog() == true)
+            {
+                // Refresh lại dữ liệu nếu thêm thành công
+                btnRefresh_Click(null, null);
+            }
+        }
+
+        private void btnImportStock_Click(object sender, RoutedEventArgs e)
+        {
+            if (dgProducts.SelectedItem is ProductDto selectedProduct)
+            {
+                var importWindow = new ImportStockWindow(selectedProduct, _stockService);
+                if (importWindow.ShowDialog() == true)
+                {
+                    // Refresh lại dữ liệu sau khi nhập kho thành công
+                    btnRefresh_Click(null, null);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Vui lòng chọn một sản phẩm từ danh sách để nhập kho.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
     }

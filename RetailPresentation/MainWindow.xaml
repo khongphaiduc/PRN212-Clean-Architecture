@@ -1,28 +1,28 @@
 ﻿<Window x:Class="RetailPresentation.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:RetailPresentation"
-        mc:Ignorable="d"
-        Title="Quản lý Bán lẻ - Danh mục Sản phẩm" Height="450" Width="800">
+        Title="Quản lý Bán lẻ - Danh sách Sản phẩm" Height="450" Width="800"
+        WindowStartupLocation="CenterScreen">
     <Grid Margin="10">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1*"/>
-            <ColumnDefinition Width="2*"/>
-        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
 
-        <GroupBox Header="Danh sách Danh mục (Categories)" Grid.Column="0" Margin="0,0,10,0">
-            <ListBox x:Name="lstCategories" 
-                     DisplayMemberPath="Name" 
-                     SelectionChanged="lstCategories_SelectionChanged"/>
-        </GroupBox>
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+            <TextBlock Text="Chọn danh mục: " VerticalAlignment="Center" FontWeight="Bold"/>
+            <ComboBox x:Name="cboCategories" Width="200" Margin="10,0,20,0"
+                      DisplayMemberPath="Name" 
+                      SelectionChanged="cboCategories_SelectionChanged"/>
 
-        <GroupBox Header="Sản phẩm thuộc Danh mục" Grid.Column="1">
-            <DataGrid x:Name="dgProducts" 
-                      AutoGenerateColumns="True" 
-                      IsReadOnly="True" 
-                      SelectionMode="Single"/>
-        </GroupBox>
+            <Button x:Name="btnRefresh" Content="Refresh" Width="80" Margin="0,0,10,0" Click="btnRefresh_Click"/>
+            <Button x:Name="btnAddProduct" Content="Add Product" Width="100" Margin="0,0,10,0" Click="btnAddProduct_Click"/>
+            <Button x:Name="btnImportStock" Content="Import Stock" Width="100" Click="btnImportStock_Click"/>
+        </StackPanel>
+
+        <DataGrid x:Name="dgProducts" Grid.Row="1" 
+                  AutoGenerateColumns="True" 
+                  IsReadOnly="True" 
+                  SelectionMode="Single"/>
     </Grid>
 </Window>

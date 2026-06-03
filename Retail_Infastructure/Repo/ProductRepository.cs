@@ -18,10 +18,9 @@ namespace Retail_Infastructure.Repo
         {
 
         }
-
         public async Task<IEnumerable<ProductEntity>> GetProductsByCategoryId(int id)
         {
-            var productList = await _dbContext.Products.Where(s => s.CategoryId == id).ToListAsync();
+            var productList = await _dbContext.Products.Where(s => s.CategoryId == id).AsNoTracking().ToListAsync();
             return _mapper.Map<IEnumerable<ProductEntity>>(productList);
         }
     }

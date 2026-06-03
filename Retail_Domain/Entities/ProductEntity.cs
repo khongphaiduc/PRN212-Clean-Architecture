@@ -9,11 +9,11 @@ namespace Retail_Domain.Entities
     // Domain Entity không nên chứa navigation của EF.
     public class ProductEntity
     {
-        public int Id { get; private set; }
-        public string Name { get; private set; }
-        public decimal Price { get; private set; }
-        public int Quantity { get; private set; } // Số lượng tồn kho hiện tại
-        public int CategoryId { get; private set; }
+        public int Id { get; set; }
+        public string Name { get;  set; }
+        public decimal Price { get; set; }
+        public int Quantity { get; set; } // Số lượng tồn kho hiện tại
+        public int CategoryId { get; set; }
 
 
         private ProductEntity() { }

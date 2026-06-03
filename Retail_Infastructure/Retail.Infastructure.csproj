@@ -7,11 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Config\.env" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="Config\.env">
+    <Content Include="config\.env">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
