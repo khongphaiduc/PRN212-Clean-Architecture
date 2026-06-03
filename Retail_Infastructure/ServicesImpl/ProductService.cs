@@ -24,12 +24,11 @@ namespace Retail.Infastructure.ServicesImpl
             _mapper = mapper;
         }
 
-        public Task AddProductAsync(ProductDto product)
+        public async Task AddProductAsync(ProductDto product)
         {
             var productEntity = _mapper.Map<ProductEntity>(product);
-            _unitOfWork.productRepository.AddAsync(productEntity);
-            _unitOfWork.SaveChangesAsync();
-            return Task.CompletedTask;
+            await _unitOfWork.productRepository.AddAsync(productEntity);
+            await _unitOfWork.SaveChangesAsync();
         }
 
         public async Task<List<ProductDto>> GetAllProductsAsync()
