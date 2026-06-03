@@ -5,8 +5,24 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:RetailPresentation"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+        Title="Quản lý Bán lẻ - Danh mục Sản phẩm" Height="450" Width="800">
+    <Grid Margin="10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="2*"/>
+        </Grid.ColumnDefinitions>
 
+        <GroupBox Header="Danh sách Danh mục (Categories)" Grid.Column="0" Margin="0,0,10,0">
+            <ListBox x:Name="lstCategories" 
+                     DisplayMemberPath="Name" 
+                     SelectionChanged="lstCategories_SelectionChanged"/>
+        </GroupBox>
+
+        <GroupBox Header="Sản phẩm thuộc Danh mục" Grid.Column="1">
+            <DataGrid x:Name="dgProducts" 
+                      AutoGenerateColumns="True" 
+                      IsReadOnly="True" 
+                      SelectionMode="Single"/>
+        </GroupBox>
     </Grid>
 </Window>

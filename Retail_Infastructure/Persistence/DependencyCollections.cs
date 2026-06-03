@@ -4,7 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Retail.Application.Services;
 using Retail.Infastructure.Mappings;
-using Retail.Infastructure.Services;
+using Retail.Infastructure.ServicesImplement;
 using Retail_Application.Interfaces;
 using Retail_Infastructure.Context;
 using Retail_Infastructure.Repo;
@@ -32,7 +32,7 @@ namespace Retail.Infastructure.Persistence
             services.AddScoped<ICategoryService, CategoryService>();
 
             //  AutoMapper 
-            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            services.AddAutoMapper(cfg => { }, AppDomain.CurrentDomain.GetAssemblies());
 
             return services;
         }

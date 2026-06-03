@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Retail.Application.DTOs;
 using Retail_Domain.Entities;
 using Retail_Infastructure.Models;
 
@@ -20,6 +21,14 @@ namespace Retail.Infastructure.Mappings
                 ));
 
             CreateMap<CategoryEntity, Category>();   //  map reverse
+
+
+
+
+            CreateMap<CategoryEntity, CategoryDTO>().ReverseMap();
+
+
+
         }
     }
 }

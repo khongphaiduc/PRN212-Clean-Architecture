@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Retail.Infastructure.Services
+namespace Retail.Infastructure.ServicesImplement
 {
     public class CategoryService : ICategoryService
     {
@@ -21,6 +21,12 @@ namespace Retail.Infastructure.Services
             _categoryRepo = categoryRepository;
             _productRepo = productRepository;
             _mapper = mapper;
+        }
+
+        public async Task<IEnumerable<CategoryDTO>> GetAllCategory()
+        {
+            var model = await _categoryRepo.GetAllAsync();
+            return _mapper.Map<IEnumerable<CategoryDTO>>(model);
         }
 
         public async Task<CategoryWithProductsDto?> GetCategoryWithProductsAsync(int categoryId)
@@ -41,5 +47,8 @@ namespace Retail.Infastructure.Services
 
             return dto;
         }
+
+
+
     }
 }
