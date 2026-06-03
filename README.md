@@ -1,42 +1,43 @@
-# Sample Clean Architecture
+# Retail Management - Clean Architecture WPF
 
-WPF desktop solution for PRN212 coursework, built with .NET 8, Entity Framework Core, SQL Server, and a layered Retail module following Clean Architecture principles.
+Retail Management is a .NET 8 WPF desktop application for managing products, categories, and stock imports. The solution is organized with a Clean Architecture-inspired structure and includes unit tests for core application services.
+
+## Table of Contents
+
+- [Overview](#overview)
+- [Features](#features)
+- [Technology Stack](#technology-stack)
+- [Solution Structure](#solution-structure)
+- [Architecture](#architecture)
+- [Prerequisites](#prerequisites)
+- [Database Configuration](#database-configuration)
+- [Build and Run](#build-and-run)
+- [Testing](#testing)
+- [Current Notes](#current-notes)
+- [Future Improvements](#future-improvements)
 
 ## Overview
 
-This repository contains two WPF applications and one unit test project:
+This project demonstrates a layered WPF application using:
 
-- `Retail.Presentation`: Retail product and stock management UI.
-- `Homework1`: Project and employee assignment management UI.
-- `Retail.Tests`: Unit tests for Retail application services.
+- Domain entities for business data.
+- Application interfaces and DTOs for service contracts.
+- Infrastructure implementations for Entity Framework Core, repositories, services, and mappings.
+- WPF presentation screens for end-user workflows.
+- xUnit tests for service-level business logic.
 
-The Retail module is organized into Domain, Application, Infrastructure, Presentation, and Test layers. It demonstrates common enterprise patterns such as DTOs, repositories, Unit of Work, AutoMapper, dependency injection, and service-based business logic.
+The main user-facing application is `Retail.Presentation`.
 
 ## Features
 
-### Retail Management
-
-- View product list.
+- Display all products in a modern WPF data grid.
 - Filter products by category.
-- Add new products.
+- Add new products with initial quantity.
 - Import stock for an existing product.
-- Track stock transaction data through service and repository layers.
-- Modern WPF interface with shared styling for buttons, inputs, and data grids.
-
-### Project and Employee Management
-
-- View project list.
-- View employees assigned to a selected project.
-- Add an employee to a project with a role.
-- Prevent duplicate employee assignments.
-- Modernized WPF dashboard layout.
-
-### Unit Tests
-
-- Tests for `ProductService`.
-- Tests for `StockService`.
-- Fake repositories and fake Unit of Work for fast service-level testing.
-- Tests run without requiring a live SQL Server database.
+- Record stock import transactions.
+- Use dependency injection to wire services, repositories, and database context.
+- Validate stock import business rules through unit tests.
+- Modernized WPF styling for windows, buttons, inputs, and tables.
 
 ## Technology Stack
 
@@ -46,7 +47,7 @@ The Retail module is organized into Domain, Application, Infrastructure, Present
 - SQL Server
 - AutoMapper
 - Microsoft.Extensions.Hosting
-- Microsoft Dependency Injection
+- Microsoft.Extensions.DependencyInjection
 - DotNetEnv
 - xUnit
 
@@ -54,17 +55,25 @@ The Retail module is organized into Domain, Application, Infrastructure, Present
 
 ```text
 Homework1.sln
-+-- Homework1/                 # WPF app for project and employee management
-+-- RetailPresentation/         # WPF app for retail management
-+-- RetailApplication/          # DTOs, service contracts, repository contracts
-+-- Retail_Domain/              # Domain entities and value objects
-+-- Retail_Infastructure/       # EF Core context, repositories, services, mappings
-+-- Retail.Tests/               # xUnit test project
++-- RetailPresentation/
+|   +-- WPF application entry point and UI screens
+|
++-- RetailApplication/
+|   +-- DTOs, service contracts, repository contracts, and factory contracts
+|
++-- Retail_Domain/
+|   +-- Domain entities and value objects
+|
++-- Retail_Infastructure/
+|   +-- EF Core DbContext, models, repositories, service implementations, mappings, and DI setup
+|
++-- Retail.Tests/
+    +-- xUnit tests and test doubles for application services
 ```
 
 ## Architecture
 
-The Retail module follows a layered structure:
+The Retail module follows a layered design:
 
 ```text
 Presentation
@@ -79,15 +88,17 @@ Domain
 Infrastructure
 ```
 
-- `RetailPresentation` owns the WPF screens and user interactions.
-- `RetailApplication` defines DTOs, interfaces, factories, and service contracts.
-- `Retail_Domain` contains business entities and value objects.
-- `Retail_Infastructure` implements persistence, repositories, Unit of Work, AutoMapper profiles, and application services.
-- `Retail.Tests` validates service behavior without connecting to the database.
+### Layer Responsibilities
+
+- `RetailPresentation`: WPF windows, UI events, and user interaction flow.
+- `RetailApplication`: DTOs, interfaces, service contracts, repository contracts, and factory contracts.
+- `Retail_Domain`: Domain entities and value objects.
+- `Retail_Infastructure`: SQL Server access, EF Core context, repositories, Unit of Work, AutoMapper profiles, service implementations, and dependency injection registration.
+- `Retail.Tests`: Unit tests for application service behavior without requiring a live database.
 
 ## Prerequisites
 
-Install the following before running the project:
+Install the following tools before running the project:
 
 - Visual Studio 2022 or later
 - .NET 8 SDK
@@ -96,7 +107,7 @@ Install the following before running the project:
 
 ## Database Configuration
 
-The Retail application reads its SQL Server connection string from:
+The Retail application loads the SQL Server connection string from:
 
 ```text
 Retail_Infastructure/config/.env
@@ -108,40 +119,44 @@ Expected format:
 SQLConnectString=Data Source=YOUR_SERVER;Initial Catalog=ManagementRetail;User ID=YOUR_USER;Password=YOUR_PASSWORD;TrustServerCertificate=True;
 ```
 
-For the `Homework1` project, the current scaffolded `CompanyDbContext` contains a direct SQL Server connection string. For a production-ready setup, move that connection string to configuration or user secrets.
+Do not commit real production credentials. For a production-ready application, store secrets in user secrets, environment variables, or a secure secret manager.
 
-## Build
+## Build and Run
 
-Restore packages and build the full solution:
+Restore packages:
 
 ```powershell
 dotnet restore Homework1.sln
+```
+
+Build the solution:
+
+```powershell
 dotnet build Homework1.sln
 ```
 
-## Run
+Run the WPF application from Visual Studio:
 
-Open `Homework1.sln` in Visual Studio.
+1. Open `Homework1.sln`.
+2. Set `Retail.Presentation` as the startup project.
+3. Ensure the `.env` file contains a valid SQL Server connection string.
+4. Start the application.
 
-To run the Retail app:
-
-1. Set `Retail.Presentation` as the startup project.
-2. Make sure `Retail_Infastructure/config/.env` contains a valid SQL Server connection string.
-3. Run the project.
-
-To run the Project and Employee app:
-
-1. Set `Homework1` as the startup project.
-2. Make sure the `CompanyDB` database is available.
-3. Run the project.
-
-## Test
+## Testing
 
 Run all unit tests:
 
 ```powershell
 dotnet test Homework1.sln
 ```
+
+The test project currently validates:
+
+- Product creation flow in `ProductService`.
+- Product retrieval mapping in `ProductService`.
+- Stock import validation in `StockService`.
+- Stock import behavior when the product does not exist.
+- Successful stock import quantity update and transaction creation.
 
 Expected result:
 
@@ -150,20 +165,21 @@ Passed: 5
 Failed: 0
 ```
 
-## Important Notes
+## Current Notes
 
-- This repository is intended for coursework and learning purposes.
-- Do not commit real production credentials.
-- The Retail module has a cleaner layered structure than the legacy `Homework1` module.
-- Existing build warnings are mostly related to nullable reference types and scaffolded connection string warnings.
+- The solution name is `Homework1.sln`, but the current solution content is focused on the Retail Management application.
+- The infrastructure folder is named `Retail_Infastructure`; this appears to be a spelling typo kept to avoid breaking project references.
+- Some nullable-reference warnings may still appear during build.
+- Database migrations or SQL setup scripts are not currently included.
 
-## Suggested Improvements
+## Future Improvements
 
-- Move all connection strings to `appsettings.json`, user secrets, or environment variables.
-- Add EF Core migrations or SQL scripts for database setup.
-- Add integration tests for repositories using an isolated test database.
-- Expand validation rules in domain entities and services.
-- Refactor the `Homework1` project to use dependency injection consistently.
+- Add EF Core migrations or SQL scripts for repeatable database setup.
+- Move all connection strings and secrets out of committed files.
+- Add integration tests for repositories with an isolated test database.
+- Expand domain validation and error handling.
+- Rename `Retail_Infastructure` to `Retail_Infrastructure` and update references.
+- Add screenshots or a short demo guide for the WPF interface.
 
 ## Author
 
